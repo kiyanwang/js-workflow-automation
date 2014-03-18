@@ -11,7 +11,7 @@ module.exports = function (grunt) {
                     reporter: "spec",
                     timeout: 10000,
                 },
-                src: ["test/**/*.js"]
+                src: ["tests/**/*.js"]
             },
         },
         jshint: {
@@ -22,18 +22,18 @@ module.exports = function (grunt) {
                 src: 'Gruntfile.js'
             },
             lib: {
-                src: ['src/index.js']
+                src: ['routes/*.js', 'models/*.js']
             }
         },
         jsbeautifier: {
             modify: {
-                src: ['Gruntfile.js', 'index.js'],
+                src: ['Gruntfile.js', 'routes/*.js', 'models/*.js'],
                 options: {
                     config: '.jsbeautifyrc'
                 }
             },
             check: {
-                src: ['Gruntfile.js', 'index.js'],
+                src: ['Gruntfile.js', 'routes/*.js'],
                 options: {
                     mode: 'VERIFY_ONLY',
                     config: '.jsbeautifyrc'
@@ -41,7 +41,7 @@ module.exports = function (grunt) {
             }
         },
         watch: {
-            options:{
+            options: {
                 livereload: true
             },
             gruntfile: {
@@ -49,22 +49,22 @@ module.exports = function (grunt) {
                 tasks: ['jshint:gruntfile']
             },
             lib: {
-                files: '<%= jshint.lib.src %>',
+                files: ['routes/*.js', 'models/*.js', 'tests/**/*.js'],
                 tasks: ['jshint:lib', 'jsbeautifier:check']
             },
-            css:{
+            css: {
                 files: ['public/stylesheets/style.less'],
                 tasks: ["less"]
             },
-            templates:{
+            templates: {
                 files: ['views/*.jade']
             }
         },
-        less:{
-            options:{
-                paths:["public/stylesheets/"]
+        less: {
+            options: {
+                paths: ["public/stylesheets/"]
             },
-            files:{
+            files: {
                 "public/stylesheets/style.css": "public/stylesheets/style.less"
             }
         }
@@ -78,9 +78,9 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-less');
 
     // Default task.
-    grunt.registerTask('default', ['jshint', 'mochaTest:test']);
+    grunt.registerTask('default', ['jshint', 'jsbeautifier:check']);
     grunt.registerTask('clean', ['jshint', 'jsbeautifier:modify']);
-    grunt.registerTask('verify', ['jshint', 'jsbeautifier:verify']);
+    grunt.registerTask('verify', ['jshint', 'jsbeautifier:check']);
     grunt.registerTask('filtertest', 'Runs tests based on pattern specified', function (taskName, pattern) {
         // set a variable on global config
         globalConfig.filter = pattern;
